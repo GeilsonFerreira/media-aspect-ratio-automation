@@ -1,34 +1,61 @@
-# Automação de Mídias 9:16 para 16:9 (Padrão TV)
+# Automação de Conversão de Mídia (9:16 → 16:9)
 
-Este projeto automatiza a conversão de **imagens e vídeos verticais (9:16)** para o formato **horizontal (16:9)**, utilizado em televisão e plataformas digitais.
+Este projeto consiste em uma **automação em Python** para converter imagens e vídeos verticais (9:16) para o formato **16:9**, aplicando preenchimento de fundo e centralização automática, conforme o **padrão de exibição da televisão**.
 
-A solução aplica **centralização automática do conteúdo** e insere fundo ajustado, evitando cortes e mantendo a integridade visual.
-
----
-
-## 🎯 Problema
-Conteúdos produzidos para redes sociais frequentemente precisam ser exibidos em ambientes de TV, que utilizam o padrão 16:9, exigindo adaptações manuais e repetitivas.
+A solução foi pensada para fluxos reais de produção audiovisual, especialmente em ambientes de TV e mídia digital.
 
 ---
 
-## 💡 Solução
-Script em Python que:
-- Identifica automaticamente o formato do arquivo
-- Centraliza o conteúdo vertical
-- Aplica fundo personalizado
-- Gera saída final em 16:9 pronta para exibição em TV
+## 🎯 Funcionalidades
+
+- Conversão de imagens e vídeos verticais (9:16) para 16:9
+- Preenchimento automático de fundo
+- Centralização automática do conteúdo
+- Saída compatível com padrões de broadcast
+- Processo totalmente automatizado em Python
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## 🛠️ Tecnologias
+
 - Python
-- MoviePy
-- Pillow
+- Bibliotecas de processamento de imagem e vídeo
 - Automação de arquivos
 
 ---
 
-## 📌 Aplicações práticas
-- Telejornais
-- Produção de conteúdo para TV e YouTube
-- Adaptação de mídias para múltiplas plataformas
+## 📌 Casos de uso
+
+- Produção de telejornais
+- Adaptação de conteúdo de redes sociais para TV
+- Padronização de mídia audiovisual
+
+---
+
+## 🚧 Status do projeto
+
+Em desenvolvimento contínuo.
+
+---
+
+# Media Aspect Ratio Automation (9:16 → 16:9)
+
+This project provides a **Python-based automation** to convert vertical images and videos (9:16) into **16:9 format**, applying background filling and automatic centering, following **TV broadcast standards**.
+
+The solution was designed for real-world audiovisual production workflows, especially in television and digital media environments.
+
+---
+
+## 🎯 Features
+
+- Convert vertical images and videos (9:16) to 16:9
+- Automatic background filling
+- Automatic content centering
+- TV and broadcast-ready output
+- Fully automated Python process
+
+---
+
+## 🚧 Project status
+
+Under continuous development.
