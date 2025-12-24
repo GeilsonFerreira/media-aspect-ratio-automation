@@ -1,3 +1,18 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Ambiente virtual
+.venv/
+
+# IDEs
+.idea/
+.vscode/
+
+# Pastas de entrada/saida (opcional)
+entrada/*
+saida/*
+
+# Cache
+__pycache__/
+*.pyc
