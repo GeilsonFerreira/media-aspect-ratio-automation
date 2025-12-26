@@ -1,29 +1,36 @@
-from moviepy import VideoFileClip, ImageClip, CompositeVideoClip
+# src/video_processor.py
+import os
 from pathlib import Path
+
+from moviepy import VideoFileClip, ImageClip, CompositeVideoClip
+from logger import get_logger
+
+log = get_logger(__name__)
 
 
 class VideoProcessor:
     """
-    Responsável por processar vídeos verticais (9:16),
-    aplicando fundo horizontal (16:9) conforme padrão de TV.
+    Processa vídeos e adapta para 16:9 com fundo.
     """
 
     def __init__(self, background_path: Path, output_resolution=(1280, 720)):
         self.background_path = background_path
         self.output_width, self.output_height = output_resolution
 
-    def is_vertical_9x16(self, video_path: Path) -> bool:
-        """Verifica se o vídeo está em proporção 9:16."""
-        clip = VideoFileClip(str(video_path))
-        width, height = clip.size
+        if not self.background_path.exists():
+            raise FileNotFoundError(
+                f"Imagem de fundo não encontrada: {self.background_path}"
+            )
+
+    def is_16x9(self, file_path: Path) -> bool:
+        clip = VideoFileClip(str(file_path))
+        w, h = clip.w, clip.h
         clip.close()
 
-        return height > width and round(height / width, 2) == round(16 / 9, 2)
+        return abs((w / h) - (16 / 9)) < 0.02
+
 
     def process(self, input_path: Path, output_path: Path) -> None:
-        """
-        Processa o vídeo aplicando fundo 16:9 e centralizando o conteúdo.
-        """
         clip = VideoFileClip(str(input_path))
 
         background = (
@@ -44,7 +51,15 @@ class VideoProcessor:
         final_clip.write_videofile(
             str(output_path),
             codec="libx264",
-            audio_codec="aac"
+            audio_codec="aac",
+            temp_audiofile="temp_audio.m4a",
+            remove_temp=True,
+            threads=4
         )
 
+        final_clip.close()
         clip.close()
+
+        log.info(
+            f"Vídeo processado com sucesso: {os.path.basename(input_path)}"
+        )

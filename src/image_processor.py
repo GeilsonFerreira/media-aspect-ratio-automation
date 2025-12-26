@@ -1,10 +1,11 @@
 from pathlib import Path
 from PIL import Image
 
-from src.logger import get_logger
-from src.config import OUTPUT_RESOLUTION
+from config import OUTPUT_RESOLUTION
 
+from logger import get_logger
 logger = get_logger(__name__)
+
 
 
 class ImageProcessor:
