@@ -13,8 +13,7 @@ logger = get_logger(__name__)
 
 from config import (
     PASTA_ENTRADA,
-    PASTA_IMAGENS,
-    PASTA_VIDEOS,
+    PASTA_SAIDA,
     FUNDO_PADRAO,
     FORMATOS_VIDEO,
     FORMATOS_IMAGEM,
@@ -66,7 +65,7 @@ class MediaMonitorHandler(FileSystemEventHandler):
                 )
                 return
 
-            output_path = Path(PASTA_VIDEOS) / file_path.name
+            output_path = Path(PASTA_SAIDA) / file_path.name
 
             if output_path.exists():
                 logger.info(f"Arquivo já processado: {output_path.name}")
@@ -89,7 +88,7 @@ class MediaMonitorHandler(FileSystemEventHandler):
 
     def _handle_image(self, file_path: Path):
         try:
-            output_path = PASTA_IMAGENS / file_path.name
+            output_path = PASTA_SAIDA / file_path.name
 
             if output_path.exists():
                 logger.info(f"Imagem já processada: {output_path.name}")
@@ -107,8 +106,8 @@ class MediaMonitorHandler(FileSystemEventHandler):
 
 def start_monitoring():
     PASTA_ENTRADA.mkdir(parents=True, exist_ok=True)
-    PASTA_IMAGENS.mkdir(parents=True, exist_ok=True)
-    PASTA_VIDEOS.mkdir(parents=True, exist_ok=True)
+    PASTA_SAIDA.mkdir(parents=True, exist_ok=True)
+    PASTA_SAIDA.mkdir(parents=True, exist_ok=True)
 
     observer = Observer()
     handler = MediaMonitorHandler()
