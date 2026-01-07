@@ -1,3 +1,4 @@
+from moviepy.editor import ImageClip
 from pathlib import Path
 from PIL import Image
 
