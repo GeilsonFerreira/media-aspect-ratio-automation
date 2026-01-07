@@ -65,7 +65,7 @@ class MediaMonitorHandler(FileSystemEventHandler):
                 )
                 return
 
-            output_path = Path(PASTA_SAIDA) / file_path.name
+            output_path = Path(PASTA_VIDEOS) / f"{file_path.stem}.mp4"
 
             if output_path.exists():
                 logger.info(f"Arquivo já processado: {output_path.name}")
