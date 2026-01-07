@@ -22,7 +22,7 @@ class ImageProcessor:
                 f"Imagem de fundo não encontrada: {self.background_path}"
             )
 
-    def process(self, input_path: Path, output_path: Path):
+    def process(self, image_path: Path, output_path: Path):
         """
         Processa uma imagem vertical e salva a versão final em 16:9.
         """
