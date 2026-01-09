@@ -1,8 +1,12 @@
 # src/video_processor.py
-import os
 from pathlib import Path
 
-from moviepy import VideoFileClip, ImageClip, CompositeVideoClip
+from moviepy import (
+    VideoFileClip,
+    ImageClip,
+    CompositeVideoClip,
+)
+
 from logger import get_logger
 
 log = get_logger(__name__)
@@ -10,10 +14,15 @@ log = get_logger(__name__)
 
 class VideoProcessor:
     """
-    Processa vídeos e adapta para 16:9 com fundo.
+    Converte vídeos de qualquer proporção para 16:9 (MP4),
+    aplicando fundo e centralização automática.
     """
 
-    def __init__(self, background_path: Path, output_resolution=(1280, 720)):
+    def __init__(
+        self,
+        background_path: Path,
+        output_resolution=(1280, 720),
+    ):
         self.background_path = background_path
         self.output_width, self.output_height = output_resolution
 
@@ -22,44 +31,74 @@ class VideoProcessor:
                 f"Imagem de fundo não encontrada: {self.background_path}"
             )
 
-    def is_16x9(self, file_path: Path) -> bool:
-        clip = VideoFileClip(str(file_path))
-        w, h = clip.w, clip.h
-        clip.close()
-
-        return abs((w / h) - (16 / 9)) < 0.02
-
-
     def process(self, input_path: Path, output_path: Path) -> None:
-        clip = VideoFileClip(str(input_path))
+        log.info(f"Processando vídeo: {input_path.name}")
 
-        background = (
-            ImageClip(str(self.background_path))
-            .with_duration(clip.duration)
-            .resized((self.output_width, self.output_height))
-        )
+        clip = None
+        final_clip = None
 
-        resized_video = clip.resized(height=self.output_height)
+        try:
+            clip = VideoFileClip(str(input_path))
 
-        pos_x = (self.output_width - resized_video.w) // 2
-        resized_video = resized_video.with_position((pos_x, 0))
+            # --- Corrige rotação automaticamente ---
+            if clip.rotation:
+                clip = clip.rotate(-clip.rotation)
 
-        final_clip = CompositeVideoClip([background, resized_video])
+            video_w, video_h = clip.w, clip.h
 
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+            # --- Cria fundo 16:9 ---
+            background = (
+                ImageClip(str(self.background_path))
+                .with_duration(clip.duration)
+                .resized((self.output_width, self.output_height))
+            )
 
-        final_clip.write_videofile(
-            str(output_path),
-            codec="libx264",
-            audio_codec="aac",
-            temp_audiofile="temp_audio.m4a",
-            remove_temp=True,
-            threads=4
-        )
+            # --- Redimensiona vídeo mantendo proporção ---
+            scale = min(
+                self.output_width / video_w,
+                self.output_height / video_h,
+            )
 
-        final_clip.close()
-        clip.close()
+            resized_video = clip.resized(scale)
 
-        log.info(
-            f"Vídeo processado com sucesso: {os.path.basename(input_path)}"
-        )
+            pos_x = (self.output_width - resized_video.w) // 2
+            pos_y = (self.output_height - resized_video.h) // 2
+
+            # ✅ MoviePy 2.x
+            resized_video = resized_video.with_position((pos_x, pos_y))
+
+            # --- Composição final ---
+            final_clip = CompositeVideoClip(
+                [background, resized_video],
+                size=(self.output_width, self.output_height),
+            )
+
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+
+            final_clip.write_videofile(
+                str(output_path),
+                codec="libx264",
+                audio_codec="aac",
+                fps=30,
+                preset="medium",
+                threads=4,
+                ffmpeg_params=["-pix_fmt", "yuv420p"],
+                temp_audiofile="temp_audio.m4a",
+                remove_temp=True,
+            )
+
+            log.info(
+                f"Vídeo processado com sucesso: {output_path.name}"
+            )
+
+        except Exception as e:
+            log.exception(
+                f"Erro ao processar vídeo {input_path.name}: {e}"
+            )
+            raise
+
+        finally:
+            if final_clip:
+                final_clip.close()
+            if clip:
+                clip.close()
